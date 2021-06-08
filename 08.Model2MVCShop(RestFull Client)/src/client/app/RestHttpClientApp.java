@@ -44,9 +44,13 @@ public class RestHttpClientApp {
 //		RestHttpClientApp.addUserTest_JsonSimple();
 //		RestHttpClientApp.addUserTest_Codehaus();
 		
+//		RestHttpClientApp.updateUserTest_JsonSimple();
+		RestHttpClientApp.updateUserTest_Codehaus();
+		
 //		RestHttpClientApp.getListUserTest_JsonSimple();
 //		RestHttpClientApp.getListUserTest_Codehaus();
 	
+		
 		
 		
 		
@@ -326,7 +330,7 @@ public class RestHttpClientApp {
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		
-		String url = "http://127.0.0.1:8080/user/json/updateUser";
+		String url = "http://127.0.0.1:8080/user/json/updateUser/jsonTest";
 		
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader("Accept", "application/json");
@@ -342,6 +346,48 @@ public class RestHttpClientApp {
 		InputStream is = httpEntity.getContent();
 		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		
+		JSONObject json = (JSONObject)JSONValue.parse(br);
+		System.out.println("JSONObject:"+json);		
+	}
+	//==>오류있음.
+	public static void updateUserTest_Codehaus() throws Exception{
+		
+		String url = "http://127.0.0.1:8080/user/json/updateUser";
+		
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+		
+		User user01 = new User();
+		
+		user01.setUserId("jsonTest");
+		user01.setUserName("jsonTEST");
+		user01.setEmail("abc@def.com");
+		user01.setPhone("010-1234-5678");
+		user01.setAddr("서울");
+		
+		ObjectMapper om = new ObjectMapper();
+		String jsonValue = om.writeValueAsString(user01);
+		
+		HttpEntity httpEntity01 = new StringEntity(jsonValue, "UTF-8");
+		httpPost.setEntity(httpEntity01);
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+		
+		System.out.println(httpResponse);
+		System.out.println();
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		
+		System.out.println("JSONValue.parse(br)");
+		JSONObject json = (JSONObject)JSONValue.parse(br);
+		System.out.println(json);
+		
+		 User user = om.readValue(json.toString(), User.class);
+		 System.out.println(user);
 	}
 	
 	
